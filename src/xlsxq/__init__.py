@@ -44,7 +44,7 @@ class Sheet(object):
 
 
 class Dumper(object):
-    def dump(self, obj, f=sys.stdout):
+    def dump(self, obj, file=sys.stdout):
         raise NotImplementedError()
 
 
@@ -52,20 +52,20 @@ class JsonDumper(Dumper):
     def __init__(self):
         self._indent = 2
 
-    def dump(self, obj, f=sys.stdout):
+    def dump(self, obj, file=sys.stdout):
         class JsonEncoder(json.JSONEncoder):
             def default(self, obj):
                 if isinstance(obj, Sheet):
                     return {'name': obj.name}
                 return json.JSONEncoder.default(self, obj)
-        f.write(json.dumps(obj, indent=self._indent, cls=JsonEncoder))
+        json.dump(obj, fp=file, indent=self._indent, cls=JsonEncoder)
 
 
 class TsvDumper(Dumper):
     def __init__(self):
         self._indent = 2
 
-    def dump(self, obj, f=sys.stdout):
+    def dump(self, obj, file=sys.stdout):
         if not isinstance(obj, list):
             raise InternalError()
 
@@ -86,7 +86,7 @@ class TsvDumper(Dumper):
             if not isinstance(row, list):
                 raise InternalError()
             text += "\t".join(map(lambda x: conv.to_str(x), row)) + "\n"
-        f.write(text)
+        file.write(text)
 
 
 class DumperFactory(object):
