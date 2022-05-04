@@ -6,7 +6,7 @@ import json
 import sys
 
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 ARG_JSON = 'json'
 ARG_TSV = 'tsv'
 
