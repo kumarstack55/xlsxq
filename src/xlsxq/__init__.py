@@ -106,6 +106,7 @@ class SheetListQuery(Query):
         self._infile = Path(infile)
         if not self._infile.exists():
             raise FileNotFoundError(f'File {self._infile} was not found.')
+        self._dumper_factory = DumperFactory()
         self._output = output
 
     def execute(self):
@@ -115,7 +116,7 @@ class SheetListQuery(Query):
         for name in book.sheetnames:
             sheet_list.append(Sheet(name))
 
-        dumper = DumperFactory().create(self._output)
+        dumper = self._dumper_factory.create(self._output)
         dumper.dump(sheet_list)
 
 
@@ -126,6 +127,7 @@ class RangeShowQuery(Query):
             raise FileNotFoundError(f'File {self._infile} was not found.')
         self._sheet = sheet
         self._range = range_
+        self._dumper_factory = DumperFactory()
         self._output = output
 
     def execute(self):
@@ -143,7 +145,7 @@ class RangeShowQuery(Query):
                 row.append(cell.value)
             table.append(row)
 
-        dumper = DumperFactory().create(self._output)
+        dumper = self._dumper_factory.create(self._output)
         dumper.dump(table)
 
 
