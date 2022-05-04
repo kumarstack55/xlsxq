@@ -29,11 +29,6 @@ class OutputNameEnum(Enum):
     TSV = ARG_TSV
 
 
-class Query(object):
-    def execute(self):
-        raise NotImplementedError()
-
-
 class Sheet(object):
     def __init__(self, name: str):
         self._name = name
@@ -99,6 +94,11 @@ class DumperFactory(object):
     def create(self, name):
         cls = self._name_cls[name]
         return cls()
+
+
+class Query(object):
+    def execute(self, file=sys.stdout):
+        raise NotImplementedError()
 
 
 class SheetListQuery(Query):
