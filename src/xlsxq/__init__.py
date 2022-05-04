@@ -109,7 +109,7 @@ class SheetListQuery(Query):
         self._dumper_factory = DumperFactory()
         self._output = output
 
-    def execute(self):
+    def execute(self, file=sys.stdout):
         book = load_workbook(str(self._infile))
 
         sheet_list: list[Sheet] = list()
@@ -117,7 +117,7 @@ class SheetListQuery(Query):
             sheet_list.append(Sheet(name))
 
         dumper = self._dumper_factory.create(self._output)
-        dumper.dump(sheet_list)
+        dumper.dump(sheet_list, file=file)
 
 
 class RangeShowQuery(Query):
@@ -130,7 +130,7 @@ class RangeShowQuery(Query):
         self._dumper_factory = DumperFactory()
         self._output = output
 
-    def execute(self):
+    def execute(self, file=sys.stdout):
         book = load_workbook(str(self._infile))
 
         if self._sheet not in book:
@@ -146,7 +146,7 @@ class RangeShowQuery(Query):
             table.append(row)
 
         dumper = self._dumper_factory.create(self._output)
-        dumper.dump(table)
+        dumper.dump(table, file=file)
 
 
 class QueryFactory(object):
