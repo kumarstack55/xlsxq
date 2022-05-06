@@ -22,7 +22,7 @@ xlsxq range show --infile infile.xlsx --sheet 'Sheet1' --range 'A1:B3' --output 
 
 # Requirements
 
-* Python 3.9+
+* Python 3.8+
 
 # Installation
 
