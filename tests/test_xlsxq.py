@@ -1,11 +1,22 @@
 from io import StringIO
 from openpyxl import Workbook
 from xlsxq import __version__
+from xlsxq import RangeShowQuery
+from xlsxq import SheetListQuery
 import json
+import pytest
+import xlsxq
 
 
 def test_version():
     assert __version__ == '0.1.1'
+
+
+def test_parse_arguments_exits_with_help_without_args():
+    with pytest.raises(SystemExit) as pytest_wrapped_e:
+        xlsxq.parse_arguments([])
+    assert pytest_wrapped_e.type == SystemExit
+    assert pytest_wrapped_e.value.code != 0
 
 
 def test_sheet_list_query_prints_sheet_list(tmpdir):
@@ -15,7 +26,6 @@ def test_sheet_list_query_prints_sheet_list(tmpdir):
     assert ws.title == 'Sheet'
     ws['A1'] = 1
     wb.save(str(book_path))
-    from xlsxq import SheetListQuery
     query = SheetListQuery(infile=str(book_path), output='json')
     io = StringIO()
     query.execute(file=io)
@@ -34,7 +44,6 @@ def test_range_show_query_prints_values(tmpdir):
     ws['A3'] = 31
     ws['B3'] = 32
     wb.save(str(book_path))
-    from xlsxq import RangeShowQuery
     query = RangeShowQuery(
             infile=str(book_path), sheet='Mysheet', range_='A1:B3',
             output='tsv')

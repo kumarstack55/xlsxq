@@ -163,6 +163,7 @@ class QueryFactory(object):
 
 def parse_arguments(args=None):
     parser = argparse.ArgumentParser()
+    parser.set_defaults(query_name=None)
     subparsers = parser.add_subparsers()
 
     parser_sheet = subparsers.add_parser('sheet')
@@ -185,7 +186,12 @@ def parse_arguments(args=None):
     parser_range_show.add_argument(
             '--output', choices=[ARG_JSON, ARG_TSV], required=True)
 
-    return parser.parse_args(args)
+    ns = parser.parse_args(args)
+    if ns.query_name is None:
+        parser.print_help()
+        sys.exit(1)
+
+    return ns
 
 
 def main():
@@ -205,7 +211,7 @@ def main():
             'output': ns.output
         }
     else:
-        raise ValueError()
+        raise InternalError()
     query = query_factory.create(ns.query_name, kwargs)
     query.execute()
 
