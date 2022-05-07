@@ -164,6 +164,7 @@ class QueryFactory(object):
 def parse_arguments(args=None):
     parser = argparse.ArgumentParser()
     parser.set_defaults(query_name=None)
+    parser.add_argument('--version', action='store_true', default=False)
     subparsers = parser.add_subparsers()
 
     parser_sheet = subparsers.add_parser('sheet')
@@ -188,8 +189,12 @@ def parse_arguments(args=None):
 
     ns = parser.parse_args(args)
     if ns.query_name is None:
-        parser.print_help()
-        sys.exit(1)
+        if ns.version:
+            print(f'xlsxq version {__version__}')
+            sys.exit(0)
+        else:
+            parser.print_help()
+            sys.exit(1)
 
     return ns
 
