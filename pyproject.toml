@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "xlsxq"
-version = "0.1.1"
+version = "0.1.2"
 description = "xlsxq is a lightweight and flexible command-line .xlsx processor."
 authors = ["kumarstack55 <kumarstack55@gmail.com>"]
 license = "MIT"
