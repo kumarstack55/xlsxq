@@ -55,3 +55,52 @@ def test_range_show_query_prints_values(tmpdir):
     assert lines[0] == "11\t12"
     assert lines[1] == "21\t22"
     assert lines[2] == "31\t32"
+
+
+def test_range_show_query_prints_values_when_range_is_cell(tmpdir):
+    book_path = tmpdir.join("book.xlsx")
+    wb = Workbook()
+    ws = wb.create_sheet("Mysheet")
+    ws['A1'] = 11
+    wb.save(str(book_path))
+    query = RangeShowQuery(
+            infile=str(book_path), sheet='Mysheet', range_='A1', output='json')
+    io = StringIO()
+    io = StringIO()
+    query.execute(file=io)
+    data = json.loads(io.getvalue())
+    assert data == [[11]]
+
+
+def test_range_show_query_prints_values_when_range_is_row(tmpdir):
+    book_path = tmpdir.join("book.xlsx")
+    wb = Workbook()
+    ws = wb.create_sheet("Mysheet")
+    ws['A1'] = 11
+    ws['B1'] = 12
+    wb.save(str(book_path))
+    query = RangeShowQuery(
+            infile=str(book_path), sheet='Mysheet', range_='A1:B1',
+            output='json')
+    io = StringIO()
+    io = StringIO()
+    query.execute(file=io)
+    data = json.loads(io.getvalue())
+    assert data == [[11, 12]]
+
+
+def test_range_show_query_prints_values_when_range_is_col(tmpdir):
+    book_path = tmpdir.join("book.xlsx")
+    wb = Workbook()
+    ws = wb.create_sheet("Mysheet")
+    ws['A1'] = 11
+    ws['A2'] = 21
+    wb.save(str(book_path))
+    query = RangeShowQuery(
+            infile=str(book_path), sheet='Mysheet', range_='A1:A2',
+            output='json')
+    io = StringIO()
+    io = StringIO()
+    query.execute(file=io)
+    data = json.loads(io.getvalue())
+    assert data == [[11], [21]]

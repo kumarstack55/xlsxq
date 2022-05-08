@@ -1,5 +1,6 @@
 from enum import Enum
 from openpyxl import load_workbook
+from openpyxl.cell import Cell
 from pathlib import Path
 import argparse
 import json
@@ -96,6 +97,32 @@ class DumperFactory(object):
         return cls()
 
 
+class Worksheet(object):
+    def __init__(self, worksheet):
+        self._worksheet = worksheet
+
+    def __getitem__(self, key):
+        range_ = self._worksheet[key]
+        if isinstance(range_, Cell):
+            return ((range_,),)
+        return range_
+
+
+class Workbook(object):
+    def __init__(self, workbook):
+        self._workbook = workbook
+
+    @property
+    def sheetnames(self):
+        return self._workbook.sheetnames
+
+    def __contains__(self, key):
+        return key in self._workbook
+
+    def __getitem__(self, key) -> Worksheet:
+        return Worksheet(self._workbook[key])
+
+
 class Query(object):
     def execute(self, file=sys.stdout):
         raise NotImplementedError()
@@ -110,7 +137,7 @@ class SheetListQuery(Query):
         self._output = output
 
     def execute(self, file=sys.stdout):
-        book = load_workbook(str(self._infile))
+        book = Workbook(load_workbook(str(self._infile)))
 
         sheet_list: list[Sheet] = list()
         for name in book.sheetnames:
@@ -131,7 +158,7 @@ class RangeShowQuery(Query):
         self._output = output
 
     def execute(self, file=sys.stdout):
-        book = load_workbook(str(self._infile))
+        book = Workbook(load_workbook(str(self._infile)))
 
         if self._sheet not in book:
             raise SheetNotFoundError(f'Sheet {self._sheet} was not found.')
